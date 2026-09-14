@@ -1,0 +1,6 @@
+{
+  "name": "CodeFlow Decompiler & Logic Visualizer",
+  "description": "วิเคราะห์การทำงานของ script source code ทีละบรรทัด จำลองสเต็ปการประมวลผล ตรวจสอบค่าตัวแปร และแกะโค้ดที่ถูกแปลงค่าหรือ Obfuscate พร้อมแปลงเป็นภาษาอื่น",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
