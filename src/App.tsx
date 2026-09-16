@@ -18,6 +18,9 @@ import { AnalysisResult, PresetScript } from './types';
 import { AlertCircle, Info, Sparkles, Terminal, RefreshCw, Smartphone } from 'lucide-react';
 import { downloadAppProjectZip, downloadAnalysisPackageZip } from './utils/exportZip';
 import { AndroidInstallModal } from './components/AndroidInstallModal';
+import { StringUnpackerModal } from './components/StringUnpackerModal';
+import { AutoPatchModal } from './components/AutoPatchModal';
+import { UnitTestGeneratorModal } from './components/UnitTestGeneratorModal';
 
 export default function App() {
   const initialPreset = PRESET_SCRIPTS[0];
@@ -28,6 +31,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'simulator' | 'flow' | 'decompiled' | 'symbols'>('simulator');
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [isAndroidModalOpen, setIsAndroidModalOpen] = useState<boolean>(false);
+  const [isStringUnpackerOpen, setIsStringUnpackerOpen] = useState<boolean>(false);
+  const [isAutoPatchOpen, setIsAutoPatchOpen] = useState<boolean>(false);
+  const [isUnitTestGenOpen, setIsUnitTestGenOpen] = useState<boolean>(false);
   // Initialize with precomputed analysis for instant load without 503 latency
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
     () => PRESET_ANALYSES[initialPreset.id] || null
@@ -178,6 +184,9 @@ export default function App() {
         }}
         hasAnalysisResult={Boolean(analysisResult)}
         onOpenAndroidModal={() => setIsAndroidModalOpen(true)}
+        onOpenStringUnpacker={() => setIsStringUnpackerOpen(true)}
+        onOpenAutoPatch={() => setIsAutoPatchOpen(true)}
+        onOpenUnitTestGen={() => setIsUnitTestGenOpen(true)}
       />
 
       {/* Notice / Informational Banner */}
@@ -384,6 +393,29 @@ export default function App() {
         isOpen={isAndroidModalOpen}
         onClose={() => setIsAndroidModalOpen(false)}
         onDownloadProjectZip={downloadAppProjectZip}
+      />
+
+      {/* Binary & String Unpacker Tool Modal */}
+      <StringUnpackerModal
+        isOpen={isStringUnpackerOpen}
+        onClose={() => setIsStringUnpackerOpen(false)}
+      />
+
+      {/* AI Automated Vulnerability Patching Modal */}
+      <AutoPatchModal
+        isOpen={isAutoPatchOpen}
+        onClose={() => setIsAutoPatchOpen(false)}
+        security={analysisResult?.securityAssessment}
+        originalCode={code}
+      />
+
+      {/* Automated Unit Test Generator Modal */}
+      <UnitTestGeneratorModal
+        isOpen={isUnitTestGenOpen}
+        onClose={() => setIsUnitTestGenOpen(false)}
+        analysisResult={analysisResult}
+        code={code}
+        language={language}
       />
     </div>
   );

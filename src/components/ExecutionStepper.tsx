@@ -35,24 +35,38 @@ export const ExecutionStepper: React.FC<ExecutionStepperProps> = ({
   const currentStep = steps[currentStepIndex] || null;
   const totalSteps = steps.length;
 
+  const currentStepRef = useRef(currentStepIndex);
+  currentStepRef.current = currentStepIndex;
+
+  const stepsRef = useRef(steps);
+  stepsRef.current = steps;
+
+  const breakpointsRef = useRef(breakpoints);
+  breakpointsRef.current = breakpoints;
+
   // Auto-play timer
   useEffect(() => {
     if (isPlaying) {
       const intervalMs = Math.max(250, 1200 / playbackSpeed);
       timerRef.current = setInterval(() => {
-        onStepChange((prev) => {
-          if (prev >= steps.length - 1) {
-            setIsPlaying(false);
-            return prev;
-          }
-          const nextIndex = prev + 1;
-          const nextStep = steps[nextIndex];
-          // Check breakpoint stop condition
-          if (nextStep && breakpoints.has(nextStep.lineNumber)) {
-            setIsPlaying(false);
-          }
-          return nextIndex;
-        });
+        const cur = currentStepRef.current;
+        const stps = stepsRef.current;
+        const brks = breakpointsRef.current;
+
+        if (cur >= stps.length - 1) {
+          setIsPlaying(false);
+          return;
+        }
+        const nextIndex = cur + 1;
+        onStepChange(nextIndex);
+
+        const nextStep = stps[nextIndex];
+        if (nextStep && brks.has(nextStep.lineNumber)) {
+          setIsPlaying(false);
+        }
+        if (nextIndex >= stps.length - 1) {
+          setIsPlaying(false);
+        }
       }, intervalMs);
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -60,7 +74,7 @@ export const ExecutionStepper: React.FC<ExecutionStepperProps> = ({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isPlaying, playbackSpeed, steps, breakpoints, onStepChange]);
+  }, [isPlaying, playbackSpeed, onStepChange]);
 
   const handleTogglePlay = () => {
     if (currentStepIndex >= totalSteps - 1) {

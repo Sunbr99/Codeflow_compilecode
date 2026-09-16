@@ -3,6 +3,7 @@ import {
   Play,
   Sparkles,
   Upload,
+  FileCode,
   FileCode2,
   Terminal,
   Code2,
@@ -34,6 +35,9 @@ interface HeaderProps {
   onDownloadAnalysisZip: () => void;
   hasAnalysisResult: boolean;
   onOpenAndroidModal: () => void;
+  onOpenStringUnpacker: () => void;
+  onOpenAutoPatch: () => void;
+  onOpenUnitTestGen: () => void;
 }
 
 export const SUPPORTED_SOURCE_LANGUAGES = [
@@ -85,6 +89,9 @@ export const Header: React.FC<HeaderProps> = ({
   onDownloadAnalysisZip,
   hasAnalysisResult,
   onOpenAndroidModal,
+  onOpenStringUnpacker,
+  onOpenAutoPatch,
+  onOpenUnitTestGen,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -244,8 +251,44 @@ export const Header: React.FC<HeaderProps> = ({
             title="ติดตั้งเป็น Application บนเครื่อง Android หรือ Build รันบน Termux"
           >
             <Smartphone className="w-3.5 h-3.5 text-emerald-700" />
-            <span className="hidden sm:inline">ติดตั้งลง Android / Termux</span>
-            <span className="sm:hidden">Android</span>
+            <span className="hidden xl:inline">ติดตั้งลง Android / Termux</span>
+            <span className="xl:hidden">Android</span>
+          </button>
+
+          {/* String Unpacker Tool Button */}
+          <button
+            id="string-unpacker-button"
+            type="button"
+            onClick={onOpenStringUnpacker}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="เครื่องมือถอดรหัสสตริงและ Base64/Hex/XOR"
+          >
+            <Terminal className="w-3.5 h-3.5 text-purple-600" />
+            <span className="hidden xl:inline">ถอดรหัสสตริง</span>
+          </button>
+
+          {/* AI Auto-Patch Tool Button */}
+          <button
+            id="ai-autopatch-button"
+            type="button"
+            onClick={onOpenAutoPatch}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="ระบบสร้างแพทช์ความปลอดภัยอัตโนมัติด้วย AI"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            <span className="hidden xl:inline">สร้างแพทช์แก้ช่องโหว่</span>
+          </button>
+
+          {/* Unit Test Generator Tool Button */}
+          <button
+            id="unit-test-generator-button"
+            type="button"
+            onClick={onOpenUnitTestGen}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="ระบบสร้าง Unit Test อัตโนมัติจากผลวิเคราะห์"
+          >
+            <FileCode className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="hidden xl:inline">สร้าง Unit Test</span>
           </button>
 
           {/* Download ZIP Dropdown / Button */}
