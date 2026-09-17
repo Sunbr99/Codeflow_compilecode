@@ -26,9 +26,7 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-     
-
-- name: Setup Android SDK
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Install SDK Platforms and Tools
