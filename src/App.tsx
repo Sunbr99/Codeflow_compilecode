@@ -21,6 +21,7 @@ import { AndroidInstallModal } from './components/AndroidInstallModal';
 import { StringUnpackerModal } from './components/StringUnpackerModal';
 import { AutoPatchModal } from './components/AutoPatchModal';
 import { UnitTestGeneratorModal } from './components/UnitTestGeneratorModal';
+import { TermuxDiagnosticsModal } from './components/TermuxDiagnosticsModal';
 
 export default function App() {
   const initialPreset = PRESET_SCRIPTS[0];
@@ -34,6 +35,7 @@ export default function App() {
   const [isStringUnpackerOpen, setIsStringUnpackerOpen] = useState<boolean>(false);
   const [isAutoPatchOpen, setIsAutoPatchOpen] = useState<boolean>(false);
   const [isUnitTestGenOpen, setIsUnitTestGenOpen] = useState<boolean>(false);
+  const [isTermuxDiagOpen, setIsTermuxDiagOpen] = useState<boolean>(false);
   // Initialize with precomputed analysis for instant load without 503 latency
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
     () => PRESET_ANALYSES[initialPreset.id] || null
@@ -187,6 +189,7 @@ export default function App() {
         onOpenStringUnpacker={() => setIsStringUnpackerOpen(true)}
         onOpenAutoPatch={() => setIsAutoPatchOpen(true)}
         onOpenUnitTestGen={() => setIsUnitTestGenOpen(true)}
+        onOpenTermuxDiagnostics={() => setIsTermuxDiagOpen(true)}
       />
 
       {/* Notice / Informational Banner */}
@@ -416,6 +419,12 @@ export default function App() {
         analysisResult={analysisResult}
         code={code}
         language={language}
+      />
+
+      {/* Termux Diagnostics & Error Doctor Modal */}
+      <TermuxDiagnosticsModal
+        isOpen={isTermuxDiagOpen}
+        onClose={() => setIsTermuxDiagOpen(false)}
       />
     </div>
   );

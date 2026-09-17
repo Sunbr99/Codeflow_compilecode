@@ -38,6 +38,7 @@ interface HeaderProps {
   onOpenStringUnpacker: () => void;
   onOpenAutoPatch: () => void;
   onOpenUnitTestGen: () => void;
+  onOpenTermuxDiagnostics: () => void;
 }
 
 export const SUPPORTED_SOURCE_LANGUAGES = [
@@ -92,6 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenStringUnpacker,
   onOpenAutoPatch,
   onOpenUnitTestGen,
+  onOpenTermuxDiagnostics,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -289,6 +291,19 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <FileCode className="w-3.5 h-3.5 text-emerald-600" />
             <span className="hidden xl:inline">สร้าง Unit Test</span>
+          </button>
+
+          {/* Termux Diagnostics & Error Doctor Button */}
+          <button
+            id="termux-doctor-button"
+            type="button"
+            onClick={onOpenTermuxDiagnostics}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="เครื่องมือวิเคราะห์และแก้ปัญหาคำสั่ง Termux, AAPT2 และ Gradle"
+          >
+            <Terminal className="w-3.5 h-3.5 text-sky-600" />
+            <span className="hidden xl:inline">Termux Doctor</span>
+            <span className="xl:hidden">Termux</span>
           </button>
 
           {/* Download ZIP Dropdown / Button */}
