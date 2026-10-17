@@ -27,13 +27,9 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
 
-      - name: 🤖 Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: 📦 Install Android Platforms & Build Tools (SDK 34)
+      - name: 🤖 Accept Android SDK Licenses
         run: |
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
-          yes | sdkmanager --licenses || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
 
       - name: 📚 Install Project Dependencies
         run: |
