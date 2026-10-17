@@ -10,13 +10,31 @@ interface CommonErrorPreset {
   id: string;
   title: string;
   signature: string;
-  category: 'Gradle / AAPT2' | 'Node.js / Vite' | 'Permission & System' | 'Android SDK / Gradle';
+  category: 'Gradle / AAPT2' | 'Node.js / Vite' | 'Permission & System' | 'Android SDK / Gradle' | 'Security & Anti-Remote Hijacking';
   rootCause: string;
   solution: string;
   command: string;
 }
 
 const COMMON_ERRORS: CommonErrorPreset[] = [
+  {
+    id: 'sec-remote-hijack',
+    title: 'ป้องกันการถูกควบคุมระยะไกล (Hacker Remote Termux Prevention)',
+    signature: 'sshd remote control / reverse shell / public tunnel attack',
+    category: 'Security & Anti-Remote Hijacking',
+    rootCause: 'การเปิดบริการ SSH/Telnet ใน Termux โดยใช้รหัสผ่านที่เดาง่าย, ผูกพอร์ตกับ 0.0.0.0 (Public WAN), หรือการใช้ ngrok/frp นำพอร์ตขึ้นอินเทอร์เน็ต ทำให้ผู้ไม่หวังดีสามารถต่อเข้ามาควบคุมเชลล์ระยะไกลได้',
+    solution: '1. ตั้งค่า SSH ให้รับการเชื่อมต่อเฉพาะ 127.0.0.1 (Localhost)\n2. ปิด Password Authentication และใช้ SSH Key Pair เท่านั้น\n3. ปิดพอร์ตที่ไม่จำเป็นและห้ามรันสคริปต์ curl | bash จากแหล่งที่ไม่น่าเชื่อถือ',
+    command: 'echo "ListenAddress 127.0.0.1\nPasswordAuthentication no\nPermitRootLogin no" > ~/.termux/sshd_config\npkill sshd || true\npkill ngrok || true'
+  },
+  {
+    id: 'sec-rogue-process',
+    title: 'ตรวจสอบโปรเซสแปลกปลอม & การแอบขุดเหรียญ / Backdoor',
+    signature: 'high cpu usage termux / suspicious background socket',
+    category: 'Security & Anti-Remote Hijacking',
+    rootCause: 'มีแบ็กดอร์หรือโปรแกรมประสงค์ร้ายรันเบื้องหลังใน Termux ที่คอยฟังคำสั่งจากภายนอกหรือดักจับข้อมูล',
+    solution: 'ใช้คำสั่งตรวจสอบพอร์ตที่กำลังฟังอยู่ (Listening Ports) และฆ่าโปรเซสที่ไม่ได้มาจากตัวผู้ใช้งานเอง',
+    command: 'ss -tulpn || netstat -tlpn\nps aux | grep -E "nc|socat|python|bash|sh" | grep -v grep'
+  },
   {
     id: 'aapt2-arch',
     title: 'AAPT2 Architecture Mismatch (EM_X86_64 vs EM_AARCH64)',

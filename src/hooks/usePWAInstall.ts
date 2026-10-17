@@ -52,7 +52,7 @@ export function usePWAInstall() {
         return true;
       }
     } catch (err) {
-      console.warn('Install prompt error:', err);
+      console.info('Install prompt notice:', err);
     }
     return false;
   };

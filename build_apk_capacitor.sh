@@ -24,7 +24,7 @@ npm install --legacy-peer-deps --ignore-scripts=false
 # 3. Build Web Application
 echo ""
 echo "🔨 [3/6] Build Web Bundle (Vite + React)..."
-npm run build
+npx vite build
 
 # 4. Setup Capacitor Android Platform
 echo ""
@@ -33,6 +33,16 @@ if [ ! -d "android" ]; then
   npx cap add android
 fi
 npx cap sync android
+
+# Update Android Launcher Icons with the new Cyber Emblem
+echo "🎨 กำลังติดตั้งไอคอนแอพพลิเคชัน CodeFlow Cyber ลงในโฟลเดอร์ mipmap ของ Android..."
+for res_dir in android/app/src/main/res/mipmap-*; do
+  if [ -d "$res_dir" ]; then
+    cp public/pwa-512x512.png "$res_dir/ic_launcher.png" 2>/dev/null || true
+    cp public/pwa-512x512.png "$res_dir/ic_launcher_round.png" 2>/dev/null || true
+    cp public/pwa-512x512.png "$res_dir/ic_launcher_foreground.png" 2>/dev/null || true
+  fi
+done
 
 # 5. Fix Android SDK version in variables.gradle (SDK 34) & AAPT2 for Termux
 echo ""
@@ -45,26 +55,19 @@ else
   echo "⚠️ ไม่พบไฟล์ android/variables.gradle"
 fi
 
-# Inject aapt2 fix for ARM64 Termux into app/build.gradle if not already present
+# Clean up any legacy daemonAapt2Executable from app/build.gradle (removed in AGP 8+)
 if [ -f "android/app/build.gradle" ]; then
-  if ! grep -q "daemonAapt2Executable" android/app/build.gradle; then
-    echo "Adding aapt2 override for ARM64 in app/build.gradle..."
-    cat << 'EOT' >> android/app/build.gradle
+  sed -i '/daemonAapt2Executable/d' android/app/build.gradle 2>/dev/null || true
+fi
 
-android {
-    aaptOptions {
-        if (System.getenv("ANDROID_HOME") != null) {
-            def aapt2Path = file("${System.getenv("ANDROID_HOME")}/build-tools/34.0.0/aapt2")
-            if (!aapt2Path.exists()) {
-                aapt2Path = file("${System.getenv("ANDROID_HOME")}/build-tools/35.0.0/aapt2")
-            }
-            if (aapt2Path.exists()) {
-                daemonAapt2Executable = aapt2Path.absolutePath
-            }
-        }
-    }
-}
-EOT
+# Configure modern AGP 8 AAPT2 override via gradle.properties if native Termux aapt2 exists
+if [ -f "android/gradle.properties" ]; then
+  if [ -f "/data/data/com.termux/files/usr/bin/aapt2" ]; then
+    if ! grep -q "android.aapt2.override" android/gradle.properties; then
+      echo "" >> android/gradle.properties
+      echo "# Native AAPT2 binary for Termux ARM64" >> android/gradle.properties
+      echo "android.aapt2.override=/data/data/com.termux/files/usr/bin/aapt2" >> android/gradle.properties
+    fi
   fi
 fi
 
@@ -75,7 +78,12 @@ if [ -d "android" ]; then
   cd android
   if [ -f "gradlew" ]; then
     chmod +x gradlew
-    ./gradlew --stop
+    if ! command -v java >/dev/null 2>&1; then
+      echo "⚠️ ไม่พบ Java (JDK) ในระบบ กรุณาติดตั้งด้วยคำสั่ง: pkg install openjdk-21 -y"
+      echo "   หรือหากต้องการใช้แอปทันที สามารถเปิดเบราว์เซอร์แล้วกด 'ติดตั้งแอป' (PWA) ได้เลยครับ"
+      exit 1
+    fi
+    ./gradlew --stop 2>/dev/null || true
     ./gradlew clean
     ./gradlew assembleDebug
     echo ""

@@ -13,7 +13,16 @@ import {
   FolderArchive,
   FileCheck2,
   ChevronDown,
-  Smartphone
+  Smartphone,
+  Languages,
+  Sun,
+  Moon,
+  Workflow,
+  Palette,
+  Settings,
+  Crown,
+  Activity,
+  ShieldAlert
 } from 'lucide-react';
 import { PresetScript } from '../types';
 import { PRESET_SCRIPTS } from '../data/presets';
@@ -29,8 +38,8 @@ interface HeaderProps {
   onAnalyze: () => void;
   isAnalyzing: boolean;
   onFileUpload: (content: string, fileName: string) => void;
-  activeTab: 'simulator' | 'flow' | 'decompiled' | 'symbols';
-  onTabChange: (tab: 'simulator' | 'flow' | 'decompiled' | 'symbols') => void;
+  activeTab: 'simulator' | 'flow' | 'decompiled' | 'symbols' | 'debug' | 'batch-security';
+  onTabChange: (tab: 'simulator' | 'flow' | 'decompiled' | 'symbols' | 'debug' | 'batch-security') => void;
   onDownloadProjectZip: () => void;
   onDownloadAnalysisZip: () => void;
   hasAnalysisResult: boolean;
@@ -39,6 +48,16 @@ interface HeaderProps {
   onOpenAutoPatch: () => void;
   onOpenUnitTestGen: () => void;
   onOpenTermuxDiagnostics: () => void;
+  onOpenPolyglotModal: () => void;
+  onOpenVirtualBox: () => void;
+  onOpenVisualAstTimeTravel: () => void;
+  onOpenPromptSandbox: () => void;
+  isDarkMode: boolean;
+  onToggleDarkMode: () => void;
+  onOpenSettingsTheme: () => void;
+  onOpenSplash?: () => void;
+  onOpenBrandAssets?: () => void;
+  apiLogCount?: number;
 }
 
 export const SUPPORTED_SOURCE_LANGUAGES = [
@@ -94,6 +113,16 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAutoPatch,
   onOpenUnitTestGen,
   onOpenTermuxDiagnostics,
+  onOpenPolyglotModal,
+  onOpenVirtualBox,
+  onOpenVisualAstTimeTravel,
+  onOpenPromptSandbox,
+  isDarkMode,
+  onToggleDarkMode,
+  onOpenSettingsTheme,
+  onOpenSplash,
+  onOpenBrandAssets,
+  apiLogCount,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -114,24 +143,54 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="border-b border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-30 shadow-xs">
+    <header className="border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur sticky top-0 z-30 shadow-xs">
       {/* Top Main Bar */}
       <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         {/* Brand & Identity */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-900 text-emerald-400 flex items-center justify-center shadow-sm">
-            <Code2 className="w-5 h-5" />
+          <div className="relative group">
+            <button
+              type="button"
+              onClick={() => onOpenSplash?.()}
+              title="คลิกเพื่อเปิดหน้าจอ Brand Splash & Cyber Crest"
+              className="group relative flex items-center justify-center rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer text-left"
+            >
+              <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-cyan-500/70 shadow-md shadow-cyan-500/30 bg-slate-950 flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:border-purple-400 group-hover:shadow-purple-500/50">
+                <img
+                  src="/app-icon.jpg"
+                  alt="Cyber Emblem Icon"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-cyan-400 text-slate-950 flex items-center justify-center text-[9px] font-black shadow-xs ring-1 ring-white dark:ring-slate-900">
+                ⚡
+              </div>
+            </button>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold tracking-tight text-slate-900">
+              <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
                 CodeFlow Decompiler
               </h1>
-              <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                Logic Visualizer
+              <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                MW CYBER CORE
               </span>
+              {onOpenBrandAssets && (
+                <button
+                  type="button"
+                  id="open-brand-assets-button"
+                  onClick={onOpenBrandAssets}
+                  title="เปิดดูและดาวน์โหลดสัญลักษณ์ ไอคอน โลโก้ MW และชุดแอสเซท (MW Logo & App Icons Hub)"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-gradient-to-r from-purple-500/20 to-cyan-500/20 hover:from-purple-500/30 hover:to-cyan-500/30 text-purple-600 dark:text-cyan-300 border border-cyan-500/40 transition-all cursor-pointer shadow-2xs"
+                >
+                  <Sparkles className="w-3 h-3 text-cyan-400" />
+                  <span>ไอคอน & โลโก้ MW</span>
+                </button>
+              )}
             </div>
-            <p className="text-xs text-slate-500 hidden sm:block">
+            <p className="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">
               วิเคราะห์ขั้นตอนการทำงานทีละบรรทัด รองรับสคริปต์ทุกภาษา พร้อมแกะโค้ดแปลงค่า
             </p>
           </div>
@@ -293,6 +352,23 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden xl:inline">สร้าง Unit Test</span>
           </button>
 
+          {/* Batch Security Audit Tool Button */}
+          <button
+            id="batch-security-header-button"
+            type="button"
+            onClick={() => onTabChange('batch-security')}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs ${
+              activeTab === 'batch-security'
+                ? 'bg-rose-600 text-white shadow-rose-600/30'
+                : 'text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-300'
+            }`}
+            title="เครื่องมือตรวจสอบความปลอดภัยทั้งชุดสคริปต์ / ZIP / โฟลเดอร์ (Batch Security Audit)"
+          >
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span className="hidden xl:inline">Batch Security Audit (ตรวจทั้งชุด/ZIP)</span>
+            <span className="xl:hidden">Batch Audit</span>
+          </button>
+
           {/* Termux Diagnostics & Error Doctor Button */}
           <button
             id="termux-doctor-button"
@@ -305,6 +381,94 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden xl:inline">Termux Doctor</span>
             <span className="xl:hidden">Termux</span>
           </button>
+
+          {/* Universal Polyglot Code Doctor Button */}
+          <button
+            id="polyglot-doctor-button"
+            type="button"
+            onClick={onOpenPolyglotModal}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="เครื่องมือวิเคราะห์ขั้นสูงและตรวจสอบความปลอดภัยทุกภาษาโปรแกรมมิ่ง"
+          >
+            <Languages className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="hidden xl:inline">Polyglot Doctor</span>
+            <span className="xl:hidden">Polyglot</span>
+          </button>
+
+          {/* Virtual Box & Termux Terminal Mode Button */}
+          <button
+            id="virtual-box-terminal-button"
+            type="button"
+            onClick={onOpenVirtualBox}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="เปิดโหมดจำลอง Virtual Box & Termux Linux Terminal"
+          >
+            <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden xl:inline">Virtual Box Terminal</span>
+            <span className="xl:hidden">VirtualBox</span>
+          </button>
+
+          {/* Visual AST Mapping & Time-Travel Debugger (NeXTSTEP Studio) Button */}
+          <button
+            id="visual-ast-timetravel-button"
+            type="button"
+            onClick={onOpenVisualAstTimeTravel}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-300 bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="เปิดโหมด Visual AST Mapping & Time-Travel Debugger (NeXTSTEP Studio)"
+          >
+            <Workflow className="w-3.5 h-3.5 text-purple-400" />
+            <span className="hidden xl:inline">AST & Time-Travel</span>
+            <span className="xl:hidden">AST</span>
+          </button>
+
+          {/* Prompt Command Runner & OS Sandbox Button */}
+          <button
+            id="prompt-sandbox-button"
+            type="button"
+            onClick={onOpenPromptSandbox}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-300 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="เปิดหน้าต่าง Prompt Command Runner & OS Sandbox สำหรับเขียนและรันชุดคำสั่งระบบ"
+          >
+            <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden xl:inline">Prompt Sandbox</span>
+            <span className="xl:hidden">Sandbox</span>
+          </button>
+
+          {/* Dark / Light Mode Theme Toggle */}
+          <button
+            id="dark-mode-toggle-button"
+            type="button"
+            onClick={onToggleDarkMode}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer shadow-2xs ${
+              isDarkMode
+                ? 'text-amber-300 bg-slate-900 border border-slate-700 hover:bg-slate-800'
+                : 'text-slate-700 bg-slate-100 border border-slate-300 hover:bg-slate-200'
+            }`}
+            title={isDarkMode ? 'เปลี่ยนเป็นโหมดสว่าง (Light Mode)' : 'เปลี่ยนเป็นโหมดมืด (Dark Mode)'}
+          >
+            {isDarkMode ? (
+              <Sun className="w-3.5 h-3.5 text-amber-400" />
+            ) : (
+              <Moon className="w-3.5 h-3.5 text-slate-700" />
+            )}
+            <span className="hidden xl:inline">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            <span className="xl:hidden">{isDarkMode ? 'Light' : 'Dark'}</span>
+          </button>
+
+          {/* Settings & Auto Theme from Image Button */}
+          <button
+            id="theme-settings-button"
+            type="button"
+            onClick={onOpenSettingsTheme}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-300 dark:border-emerald-700/60 rounded-lg transition-colors cursor-pointer shadow-2xs"
+            title="ตั้งค่าหน้าตา UI ปรับแต่งปุ่ม และระบบแนบรูปสร้างธีมอัตโนมัติ (AI Auto Theme)"
+          >
+            <Palette className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span className="hidden xl:inline">ตั้งค่าธีม & UI</span>
+            <span className="xl:hidden">ธีม</span>
+          </button>
+
+
 
           {/* Download ZIP Dropdown / Button */}
           <div className="relative">
@@ -470,6 +634,42 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Terminal className="w-3.5 h-3.5" />
             <span>ตารางถอดรหัสสัญลักษณ์ (Decoded Symbols)</span>
+          </button>
+
+          <button
+            id="tab-debug"
+            type="button"
+            onClick={() => onTabChange('debug')}
+            className={`inline-flex items-center gap-2 px-4 py-2.5 border-b-2 font-medium transition-colors whitespace-nowrap ${
+              activeTab === 'debug'
+                ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5 text-indigo-600" />
+            <span>API Log & Debug Trace</span>
+            {typeof apiLogCount === 'number' && apiLogCount > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-indigo-100 text-indigo-700 border border-indigo-200">
+                {apiLogCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            id="tab-batch-security"
+            type="button"
+            onClick={() => onTabChange('batch-security')}
+            className={`inline-flex items-center gap-2 px-4 py-2.5 border-b-2 font-medium transition-colors whitespace-nowrap ${
+              activeTab === 'batch-security'
+                ? 'border-rose-600 text-rose-700 bg-rose-50/50'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+            }`}
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+            <span>ตรวจความปลอดภัยทั้งชุด (Batch Security Audit)</span>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-rose-100 text-rose-700 border border-rose-200">
+              ZIP / Folder
+            </span>
           </button>
         </div>
 

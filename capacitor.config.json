@@ -1,6 +1,6 @@
 {
-  "appId": "com.codeflow.decompiler",
-  "appName": "CodeFlow Decompiler",
+  "appId": "com.mw.codeflow.cyber",
+  "appName": "MW CodeFlow",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "server": {
@@ -10,6 +10,7 @@
   "android": {
     "allowMixedContent": true,
     "captureInput": true,
-    "webContentsDebuggingEnabled": true
+    "webContentsDebuggingEnabled": true,
+    "backgroundColor": "#050814"
   }
 }

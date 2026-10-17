@@ -9,7 +9,9 @@ import {
   X,
   Play,
   FolderArchive,
-  Info
+  Info,
+  ShieldAlert,
+  ShieldCheck
 } from 'lucide-react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 
@@ -104,6 +106,29 @@ export const AndroidInstallModal: React.FC<AndroidInstallModalProps> = ({
                   </div>
                   <p className="text-emerald-800 leading-relaxed">
                     ระบบรองรับ Progressive Web App (PWA) เต็มรูปแบบ Android จะสร้างตัวแอปพลิเคชันพร้อมไอคอนบนหน้าจอหลัก (Home Screen) เปิดแบบเต็มหน้าจอ Standalone ไม่มีแถบ URL ของเบราว์เซอร์ และเก็บ Cache ออฟไลน์ได้
+                  </p>
+                </div>
+              </div>
+
+              {/* App Icon Preview Card */}
+              <div className="flex items-center gap-4 p-3.5 bg-slate-900 text-white rounded-xl border border-slate-800 shadow-md">
+                <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-cyan-400 shadow-lg shadow-cyan-500/20 bg-black shrink-0 p-0.5">
+                  <img
+                    src="/pwa-192x192.png"
+                    alt="Android App Icon"
+                    className="w-full h-full object-cover rounded-xl"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="font-bold text-white text-sm flex items-center gap-2">
+                    <span>CodeFlow Decompiler</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/40">
+                      Official App Icon
+                    </span>
+                  </div>
+                  <p className="text-slate-300 text-xs mt-0.5">
+                    ไอคอนแอพพลิเคชั่นสัญลักษณ์หน้ากากไซเบอร์พร้อมเขาพลังงานนีออน จะแสดงบนหน้าจอหลัก (Home Screen) และ Drawer ของ Android
                   </p>
                 </div>
               </div>
@@ -254,6 +279,28 @@ export const AndroidInstallModal: React.FC<AndroidInstallModalProps> = ({
                 <p className="text-[11px] leading-relaxed">
                   ควรดาวน์โหลด Termux จาก <strong>F-Droid</strong> (เนื่องจากเวอร์ชันบน Google Play Store หยุดการอัปเดตและแพ็กเกจเก่า) โดยค้นหา "Termux" บน F-Droid เพื่อการทำงานที่เสถียรที่สุด
                 </p>
+              </div>
+
+              {/* Anti-Remote Hijacking & User Safety Guide */}
+              <div className="p-4 bg-slate-900 border border-sky-500/30 rounded-xl text-slate-200 space-y-2.5">
+                <div className="flex items-center gap-2 text-sky-400 font-semibold text-xs">
+                  <ShieldCheck className="w-4 h-4 text-sky-400" />
+                  <span>มาตรการความปลอดภัยสูงสุด: ป้องกันแฮกเกอร์ควบคุม Termux จากระยะไกล</span>
+                </div>
+                <div className="text-[11px] text-slate-300 space-y-1.5 leading-relaxed">
+                  <p>
+                    • <strong>ห้ามเปิด SSH ผูกกับ IP ภายนอก (0.0.0.0):</strong> หากมีการใช้งาน SSH ให้ตั้งค่า <code className="bg-slate-800 text-amber-300 px-1 py-0.5 rounded">ListenAddress 127.0.0.1</code> เสมอ เพื่อรับเฉพาะการเชื่อมต่อภายในเครื่อง
+                  </p>
+                  <p>
+                    • <strong>ระวังการใช้ Reverse Tunnel:</strong> ห้ามรันโปรแกรมเช่น Ngrok, Frp, Serveo หรือ Teleconsole เพื่อ forward พอร์ต Termux สู่สาธารณะโดยไม่มีการยืนยันตัวตนระดับสูง
+                  </p>
+                  <p>
+                    • <strong>หลีกเลี่ยงสคริปต์สุ่มเสี่ยง:</strong> อย่ารันคำสั่ง <code className="bg-slate-800 text-rose-300 px-1 py-0.5 rounded">curl ... | bash</code> จากเว็บไซต์ที่ไม่รู้จักหรือลิงก์แปลกปลอม
+                  </p>
+                  <p>
+                    • <strong>รัน Localhost ปลอดภัย 100%:</strong> โปรเจกต์ CodeFlow นี้รันบน <code className="text-emerald-400">http://localhost:3000</code> แบบ Local Device เท่านั้น ไม่มีการเปิดพอร์ตออกสู่อินเทอร์เน็ตสาธารณะ จึงปลอดภัยจากการถูกเจาะระยะไกล
+                  </p>
+                </div>
               </div>
             </div>
           )}
