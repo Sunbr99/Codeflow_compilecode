@@ -20,7 +20,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
 
       - name: ☕ Setup Java JDK (v21 Zulu)
         uses: actions/setup-java@v4
@@ -38,7 +37,7 @@ jobs:
 
       - name: 📚 Install Project Dependencies
         run: |
-          npm ci || npm install --legacy-peer-deps --no-audit
+          npm install --legacy-peer-deps --no-audit
 
       - name: 🔍 Verify Codebase Health & Types
         run: |
