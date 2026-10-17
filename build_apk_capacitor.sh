@@ -36,13 +36,17 @@ npx cap sync android
 
 # Update Android Launcher Icons with the new Cyber Emblem
 echo "🎨 กำลังติดตั้งไอคอนแอพพลิเคชัน CodeFlow Cyber ลงในโฟลเดอร์ mipmap ของ Android..."
-for res_dir in android/app/src/main/res/mipmap-*; do
+for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+  res_dir="android/app/src/main/res/mipmap-$density"
   if [ -d "$res_dir" ]; then
     cp public/pwa-512x512.png "$res_dir/ic_launcher.png" 2>/dev/null || true
     cp public/pwa-512x512.png "$res_dir/ic_launcher_round.png" 2>/dev/null || true
     cp public/pwa-512x512.png "$res_dir/ic_launcher_foreground.png" 2>/dev/null || true
   fi
 done
+# ลบไฟล์ PNG ซ้ำซ้อนออกจาก anydpi-v26 เพื่อไม่ให้ชนกับ ic_launcher.xml
+rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.png 2>/dev/null || true
+rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.png 2>/dev/null || true
 
 # 5. Fix Android SDK version in variables.gradle (SDK 34) & AAPT2 for Termux
 echo ""

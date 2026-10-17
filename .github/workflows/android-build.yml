@@ -50,13 +50,17 @@ jobs:
 
       - name: 🎨 Install MW Cyber Icons into Android Launcher Resources
         run: |
-          for res_dir in android/app/src/main/res/mipmap-*; do
+          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            res_dir="android/app/src/main/res/mipmap-$density"
             if [ -d "$res_dir" ]; then
               cp public/pwa-512x512.png "$res_dir/ic_launcher.png" 2>/dev/null || true
               cp public/pwa-512x512.png "$res_dir/ic_launcher_round.png" 2>/dev/null || true
               cp public/pwa-512x512.png "$res_dir/ic_launcher_foreground.png" 2>/dev/null || true
             fi
           done
+          # Remove duplicate PNG files from anydpi-v26 to prevent duplicate resource XML collisions
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.png 2>/dev/null || true
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.png 2>/dev/null || true
 
       - name: ⚙️ Configure Android SDK 34 & Clean Build Config
         run: |
