@@ -1,0 +1,94 @@
+name: Android Build CI - MW CodeFlow
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Build MW CodeFlow Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js (v22 LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: ☕ Setup Java JDK (v21 Zulu)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: 🤖 Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 📦 Install Android Platforms & Build Tools (SDK 34)
+        run: |
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          yes | sdkmanager --licenses || true
+
+      - name: 📚 Install Project Dependencies
+        run: |
+          npm ci || npm install --legacy-peer-deps --no-audit
+
+      - name: 🔍 Verify Codebase Health & Types
+        run: |
+          npm run lint
+
+      - name: 🔨 Build Web Application Bundle (Vite)
+        run: |
+          npm run build:web
+
+      - name: 📱 Initialize and Sync Capacitor Android
+        run: |
+          npx cap add android || true
+          npx cap sync android
+
+      - name: 🎨 Install MW Cyber Icons into Android Launcher Resources
+        run: |
+          for res_dir in android/app/src/main/res/mipmap-*; do
+            if [ -d "$res_dir" ]; then
+              cp public/pwa-512x512.png "$res_dir/ic_launcher.png" 2>/dev/null || true
+              cp public/pwa-512x512.png "$res_dir/ic_launcher_round.png" 2>/dev/null || true
+              cp public/pwa-512x512.png "$res_dir/ic_launcher_foreground.png" 2>/dev/null || true
+            fi
+          done
+
+      - name: ⚙️ Configure Android SDK 34 & Clean Build Config
+        run: |
+          if [ -f "android/variables.gradle" ]; then
+            sed -i 's/compileSdkVersion = 36/compileSdkVersion = 34/g' android/variables.gradle
+            sed -i 's/targetSdkVersion = 36/targetSdkVersion = 34/g' android/variables.gradle
+          fi
+          if [ -f "android/app/build.gradle" ]; then
+            sed -i '/daemonAapt2Executable/d' android/app/build.gradle 2>/dev/null || true
+          fi
+
+      - name: 🚀 Build Debug APK via Gradle
+        run: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: 📤 Upload MW CodeFlow APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MW-CodeFlow-Cyber-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+
+      - name: 📋 Display Build Output Summary
+        run: |
+          echo "=========================================================="
+          echo "🎉 Android APK Built Successfully!"
+          echo "File: $(ls android/app/build/outputs/apk/debug/*.apk)"
+          echo "=========================================================="

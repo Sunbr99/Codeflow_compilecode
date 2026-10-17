@@ -67,9 +67,22 @@
 
 ---
 
+## ☁️ ทางเลือกที่ 4: สร้าง APK อัตโนมัติผ่าน GitHub Actions (`android-build.yml`) ⭐ แนะนำสูงสุด
+ไม่ต้องติดตั้ง Java หรือ Android SDK บนเครื่องให้ยุ่งยาก เพียง Push โค้ดขึ้น GitHub:
+1. Push โค้ดขึ้นไปที่ GitHub:
+   ```bash
+   git push origin main
+   ```
+2. ไปที่แท็บ **Actions** บน GitHub ของคุณ
+3. คุณจะเห็น Workflow **"Android Build CI - MW CodeFlow"** กำลังรันโดยอัตโนมัติ
+4. เมื่อทำงานเสร็จเรียบร้อย ให้คลิกที่ผลการรัน แล้วเลื่อนลงไปที่หัวข้อ **Artifacts**
+5. คลิกดาวน์โหลดไฟล์ **`MW-CodeFlow-Cyber-debug-apk`** เพื่อรับไฟล์ `.apk` ไปติดตั้งบนมือถือได้ทันที!
+
+---
+
 ## ⚙️ ข้อมูล App Package Identity
-* **App Name:** CodeFlow Decompiler
-* **Package ID:** `com.codeflow.decompiler`
+* **App Name:** MW CodeFlow
+* **Package ID:** `com.mw.codeflow.cyber`
 * **Supported Architecture:** ARM64-v8a, ARMEABI-v7a, x86_64
-* **Min Android SDK:** Android 7.0 (API Level 24) ขึ้นไป
+* **Min Android SDK:** Android 5.1 (API Level 22) ขึ้นไป
 * **Target Android SDK:** Android 14 (API Level 34)
